@@ -64,38 +64,6 @@ app.post("/api/claims", upload.single("file"), async (req, res) => {
       });
     }
 
-    // Convert nested JSON strings into actual objects
-    try {
-      if (typeof data.discountModels === "string") {
-        data.discountModels = JSON.parse(data.discountModels);
-      }
-
-      if (typeof data.monthlySchemes === "string") {
-        data.monthlySchemes = JSON.parse(data.monthlySchemes);
-      }
-
-      if (typeof data.additionalFields === "string") {
-        data.additionalFields = JSON.parse(data.additionalFields);
-      }
-
-      if (typeof data.items === "string") {
-        data.items = JSON.parse(data.items);
-      }
-      if (data.schemeStartDate) {
-        data.schemeStartDate = new Date(data.schemeStartDate)
-          .toISOString()
-          .slice(0, 10);
-      }
-
-      if (data.schemeEndDate) {
-        data.schemeEndDate = new Date(data.schemeEndDate)
-          .toISOString()
-          .slice(0, 10);
-      }
-    } catch (err) {
-      console.error("❌ JSON PARSE ERROR:", err.message);
-    }
-
     const webhookUrls = process.env.WEBHOOK_URLS
       ? process.env.WEBHOOK_URLS.split(",").map((u) => u.trim())
       : [];
@@ -240,88 +208,6 @@ app.get("/oauth/callback", async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.response?.data || error.message,
-    });
-  }
-});
-
-app.post("/api/vendors", upload.single("file"), async (req, res) => {
-  try {
-    console.log("📄 VENDOR FILE:", req.file);
-    console.log("📦 VENDOR BODY:", req.body);
-
-    const vendorData = JSON.parse(req.body.vendorData || "{}");
-
-    // ➤ Create payload for webhook
-    const payload = {
-      vendorData,
-      processed_at: req.body.processed_at,
-      file: req.file
-        ? {
-            name: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size,
-            base64: req.file.buffer.toString("base64"),
-          }
-        : null,
-    };
-
-    // ➤ Webhook URLs (same pattern as claims)
-    const webhookUrls = process.env.VENDOR_WEBHOOK_URLS
-      ? process.env.VENDOR_WEBHOOK_URLS.split(",").map((u) => u.trim())
-      : [];
-
-    if (webhookUrls.length === 0) {
-      return res.status(500).json({
-        success: false,
-        message: "No vendor webhook URLs configured",
-      });
-    }
-
-    console.log("🔗 Sending Vendor to Webhooks:", webhookUrls);
-
-    // ➤ Send to all webhook URLs
-    const requests = webhookUrls.map((url) =>
-      axios.post(url, payload, {
-        headers: { "Content-Type": "application/json" },
-        timeout: 15000,
-        validateStatus: (status) => status >= 200 && status < 500,
-      })
-    );
-
-    const results = await Promise.allSettled(requests);
-
-    let successCount = 0;
-    let failureCount = 0;
-
-    results.forEach((result, index) => {
-      if (result.status === "fulfilled" && result.value.status < 400) {
-        successCount++;
-        console.log(`✅ Vendor webhook success: ${webhookUrls[index]}`);
-      } else {
-        failureCount++;
-        console.error(`❌ Vendor webhook failed: ${webhookUrls[index]}`);
-
-        if (result.reason?.response) {
-          console.error("Status:", result.reason.response.status);
-          console.error("Response:", result.reason.response.data);
-        } else {
-          console.error("Error:", result.reason?.message);
-        }
-      }
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Vendor processed successfully",
-      webhookSuccess: successCount,
-      webhookFailed: failureCount,
-    });
-  } catch (error) {
-    console.error("🔥 Vendor Backend Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error (Vendor)",
     });
   }
 });
