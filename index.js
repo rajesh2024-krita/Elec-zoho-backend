@@ -998,6 +998,21 @@ app.post(
         return false;
       };
 
+      const toYesNoNumber = (value) => {
+        if (
+          value === true ||
+          value === "true" ||
+          value === 1 ||
+          value === "1" ||
+          value === "Yes" ||
+          value === "yes" ||
+          value === "on"
+        ) {
+          return 1;
+        }
+        return 0;
+      };
+
       // ===== Ensure Contacts lookup exists =====
       let contactId = null;
       // Create new Contact if not exists
@@ -1044,6 +1059,24 @@ app.post(
         }
       };
 
+      const createdTime = new Date().toISOString().slice(0, 19);
+
+      // Helper to parse array fields
+      const parseArrayField = (value) => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value;
+        try {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (e) {
+          // If not JSON, treat as comma-separated
+          if (typeof value === 'string') {
+            return value.split(',').map(v => v.trim()).filter(Boolean);
+          }
+        }
+        return [];
+      };
+
       // ===== Prepare Payload =====
       const payload = {
         data: [
@@ -1054,14 +1087,20 @@ app.post(
             Fathers_Name: req.body.Fathers_Name || "",
             Mobile_Number: req.body.Mobile_Number || "",
             Contact_Number: req.body.Contact_Number || "",
-            Email: req.body.Email || "",
+            Alternate_Number: req.body.Alternate_Number || "",
+            Date_Of_Birth: formatDateForZoho(req.body.Date_Of_Birth),
+            Email_Address: req.body.Email || "",
             Secondary_Email: req.body.Secondary_Email || "",
             Address: req.body.Address || "",
+            Address_Type: req.body.Address_Type || "",
             District: req.body.District || "",
             Location: req.body.Location || "",
             Office_Name: req.body.Office_Name || "",
             Office_Address: req.body.Office_Address || "",
+            Salesman_Name: req.body.Salesman_Name || "",
+            Salesman_Name_2: req.body.Salesman_Name_2 || "",
             Contacts: contactId ? { id: contactId } : null,
+            CREATED_TIME_AND_DATE: createdTime,
 
             // Financial Details
             Bill_Amount: parseFloat(req.body.Bill_Amount) || null,
@@ -1094,39 +1133,13 @@ app.post(
               }
             })(),
 
-            // Add a date formatting helper
-
-            // Then in your payload:
             EMI_Start_Date: formatDateForZoho(req.body.EMI_Start_Date),
             EMI_End_Date: formatDateForZoho(req.body.EMI_End_Date),
             Delivery_On: formatDateForZoho(req.body.Delivery_On),
             Limit: parseFloat(req.body.Limit) || null,
-            Limit_Approved: (() => {
-              const value = req.body.Limit_Approved;
+            Limit_Approved: toYesNoNumber(req.body.Limit_Approved),
 
-              // If it's already a number, return it as integer
-              if (value !== undefined && value !== null && value !== "") {
-                const numValue = parseInt(value);
-                if (!isNaN(numValue)) {
-                  return numValue;
-                }
-              }
-
-              // Otherwise convert boolean to integer
-              if (
-                value === true ||
-                value === "true" ||
-                value === "Yes" ||
-                value === "yes" ||
-                value === "on"
-              ) {
-                return 1;
-              }
-
-              return 0;
-            })(),
-
-            // Product Details
+            // Product Details (Including Form 26 Fields)
             SKU1: req.body.SKU1 || "",
             SKU2: req.body.SKU2 || "",
             SKU3: req.body.SKU3 || "",
@@ -1151,29 +1164,17 @@ app.post(
             Rate_4: req.body.Rate_4 ? req.body.Rate_4.toString() : "0",
             Rate_5: req.body.Rate_5 ? req.body.Rate_5.toString() : "0",
 
-            Prod_Category: (() => {
-              const value = req.body.Prod_Category;
-              if (!value) return [];
+            Prod_Category: parseArrayField(req.body.Prod_Category),
 
-              if (Array.isArray(value)) return value;
-
-              if (typeof value === "string") {
-                try {
-                  const parsed = JSON.parse(value);
-                  if (Array.isArray(parsed)) return parsed;
-                } catch (e) {
-                  // If not JSON, treat as comma-separated
-                  return value
-                    .split(",")
-                    .map((v) => v.trim())
-                    .filter(Boolean);
-                }
-              }
-
-              return [];
-            })(),
-
+            // NEW FIELDS FROM FORM NO. 26
             Multi_Product: toBoolean(req.body.Multi_Product),
+            Company_Brand: req.body.Company_Brand || "",
+            Discount1: toBoolean(req.body.Discount1),
+            Under_Exchange: toBoolean(req.body.Under_Exchange),
+            Previous_Loan: toBoolean(req.body.Previous_Loan),
+            One_Assist: req.body.One_Assist || "",
+            One_Assist_Amount: parseFloat(req.body.One_Assist_Amount) || null,
+            Diwali_2024_Spin: req.body.Diwali_2024_Spin || "",
 
             // Delivery Details
             Delivery: req.body.Delivery || "",
@@ -1184,31 +1185,16 @@ app.post(
             Location_Of_Delivery: req.body.Location_Of_Delivery || "",
 
             // Scheme Details
-            Scheme_Offered: (() => {
-              const value = req.body.Scheme_Offered;
-              if (!value) return [];
-
-              if (Array.isArray(value)) return value;
-
-              try {
-                const parsed = JSON.parse(value);
-                if (Array.isArray(parsed)) return parsed;
-              } catch {}
-
-              if (typeof value === "string") {
-                return value
-                  .split(",")
-                  .map((v) => v.trim())
-                  .filter(Boolean);
-              }
-
-              return [];
-            })(),
-
+            Scheme_Offered: parseArrayField(req.body.Scheme_Offered),
             Scheme_Number: req.body.Scheme_Number || "",
+            
+            // Gift Details (Form 26)
             Gift_Name: req.body.Gift_Name || "",
             Gift_Number: req.body.Gift_Number || "",
-            Gifts_on_Air: req.body.Gifts_on_Air || "",
+            Gift_Contribution: req.body.Gift_Contribution || "",
+            Gift_Offer: parseArrayField(req.body.Gift_Offer),
+            
+            Gifts_on_Air: toBoolean(req.body.Gifts_on_Air),
             Spin_Wheel_Gifts: req.body.Spin_Wheel_Gifts || "",
 
             Rs_1000_Cashback: toBoolean(req.body.Rs_1000_Cashback),
