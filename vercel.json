@@ -1,15 +1,32 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "index.js",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/index.js"
-        }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/health", "dest": "/index.js" },
+
+    { "src": "/api/claims", "dest": "/index.js" },
+    { "src": "/api/vendors", "dest": "/index.js" },
+    { "src": "/api/products/search", "dest": "/index.js" },
+
+    { "src": "/api/contacts/search", "dest": "/index.js" },
+    { "src": "/api/contacts/save", "dest": "/index.js" },
+    { "src": "/api/contacts/(?<id>.*)", "dest": "/index.js" },
+
+    { "src": "/vendors/search", "dest": "/index.js" },
+
+    { "src": "/api/sales/create", "dest": "/index.js" },
+
+    { "src": "/api/finance/contacts/search", "dest": "/index.js" },
+
+    { "src": "/api/trail/search", "dest": "/index.js" },
+    { "src": "/api/trail/create", "dest": "/index.js" },
+    { "src": "/api/trail/check-duplicate", "dest": "/index.js" },
+
+    { "src": "/oauth/callback", "dest": "/index.js" }
+  ]
 }
