@@ -26,6 +26,7 @@
     { "src": "/api/trail/search", "dest": "/index.js" },
     { "src": "/api/trail/create", "dest": "/index.js" },
     { "src": "/api/trail/check-duplicate", "dest": "/index.js" },
+    { "src": "/ai/generate", "dest": "/index.js" },
 
     { "src": "/oauth/callback", "dest": "/index.js" }
   ]
