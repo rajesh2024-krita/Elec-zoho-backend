@@ -1070,8 +1070,11 @@ app.post(
           if (Array.isArray(parsed)) return parsed;
         } catch (e) {
           // If not JSON, treat as comma-separated
-          if (typeof value === 'string') {
-            return value.split(',').map(v => v.trim()).filter(Boolean);
+          if (typeof value === "string") {
+            return value
+              .split(",")
+              .map((v) => v.trim())
+              .filter(Boolean);
           }
         }
         return [];
@@ -1187,13 +1190,13 @@ app.post(
             // Scheme Details
             Scheme_Offered: parseArrayField(req.body.Scheme_Offered),
             Scheme_Number: req.body.Scheme_Number || "",
-            
+
             // Gift Details (Form 26)
             Gift_Name: req.body.Gift_Name || "",
             Gift_Number: req.body.Gift_Number || "",
             Gift_Contribution: req.body.Gift_Contribution || "",
             Gift_Offer: parseArrayField(req.body.Gift_Offer),
-            
+
             Gifts_on_Air: toBoolean(req.body.Gifts_on_Air),
             Spin_Wheel_Gifts: req.body.Spin_Wheel_Gifts || "",
 
@@ -1347,6 +1350,56 @@ app.post("/api/trail/check-duplicate", async (req, res) => {
       message: "Error checking for duplicates",
       error: error.response?.data || error.message,
     });
+  }
+});
+
+const CryptoJS = require("crypto-js");
+
+// ===============================================
+// AES ENCRYPTION (crypto-js)
+// ===============================================
+function encrypt(text) {
+  return CryptoJS.AES.encrypt(text, process.env.AES_SECRET).toString();
+}
+
+function decrypt(cipher) {
+  const bytes = CryptoJS.AES.decrypt(cipher, process.env.AES_SECRET);
+  return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+// ===============================================
+// SEND ENCRYPTED GEMINI KEY TO FRONTEND
+// ===============================================
+app.get("/config/encrypted-key", (req, res) => {
+  try {
+    const encryptedKey = encrypt(process.env.GEMINI_KEY);
+    res.json({ encryptedKey });
+  } catch (err) {
+    res.status(500).json({ error: "Encryption failed" });
+  }
+});
+
+// ===============================================
+// AI PROXY – decrypt → call Gemini → return result
+// ===============================================
+app.post("/ai/generate", async (req, res) => {
+  try {
+    const { prompt, encryptedKey } = req.body;
+
+    const decryptedKey = decrypt(encryptedKey);
+    if (!decryptedKey)
+      return res.status(400).json({ error: "Invalid encrypted key" });
+
+    const aiRes = await axios.post(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      { contents: [{ parts: [{ text: prompt }] }] },
+      { params: { key: decryptedKey } },
+    );
+
+    res.json(aiRes.data);
+  } catch (err) {
+    console.log("AI Error:", err);
+    res.status(500).json({ error: "Gemini request failed" });
   }
 });
 
