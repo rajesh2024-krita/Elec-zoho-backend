@@ -10,8 +10,10 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: "https://elec-zoho-frontend-whjphfjx.onslate.in",
-  credentials: true
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  credentials: false
 }));
 
 app.use(express.json({ limit: "10mb" }));
