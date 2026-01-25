@@ -9,7 +9,14 @@ const CryptoJS = require("crypto-js");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "*", // allow all (or specify frontend)
+    methods: "GET,POST,PUT",
+    allowedHeaders: "Content-Type,Authorization",
+  }),
+);
 
 app.use(express.json({ limit: "10mb" }));
 
@@ -423,13 +430,15 @@ app.use(express.json({ limit: "10mb" }));
 // =============================
 const util = require("util");
 function generateRandomBigInt() {
-  return Math.floor(Math.random() * 9_000_000_000_000_000) + 1_000_000_000_000_000;
+  return (
+    Math.floor(Math.random() * 9_000_000_000_000_000) + 1_000_000_000_000_000
+  );
 }
 app.post("/api/vendors", async (req, res) => {
   try {
     console.log(
       "📥 BODY RECEIVED:",
-      util.inspect(req.body, { depth: null, colors: true })
+      util.inspect(req.body, { depth: null, colors: true }),
     );
 
     // -----------------------
@@ -456,15 +465,13 @@ app.post("/api/vendors", async (req, res) => {
         value === null || value === undefined
           ? ""
           : typeof value === "object"
-          ? JSON.stringify(value)
-          : String(value).trim();
+            ? JSON.stringify(value)
+            : String(value).trim();
     });
 
-    if (!vendorData.Vendor_Name)
-      vendorData.Vendor_Name = "Unknown Vendor";
+    if (!vendorData.Vendor_Name) vendorData.Vendor_Name = "Unknown Vendor";
 
-    const GSTIN =
-      vendorData.GSTIN_NUMBER || vendorData.gstin || "";
+    const GSTIN = vendorData.GSTIN_NUMBER || vendorData.gstin || "";
 
     // -----------------------
     // 4️⃣ Build PO_Items — SIMPLE TEXT (NO LOOKUP)
@@ -484,10 +491,7 @@ app.post("/api/vendors", async (req, res) => {
       }));
     }
 
-    console.log(
-      "🧾 FINAL PO_Items:",
-      JSON.stringify(PO_Items, null, 2)
-    );
+    console.log("🧾 FINAL PO_Items:", JSON.stringify(PO_Items, null, 2));
 
     // -----------------------
     // 5️⃣ Search Vendor by GSTIN
@@ -505,7 +509,7 @@ app.post("/api/vendors", async (req, res) => {
             params: {
               criteria: `(GSTIN_NUMBER:equals:${GSTIN})`,
             },
-          }
+          },
         );
 
         if (searchResp.data.data?.length > 0) {
@@ -524,14 +528,14 @@ app.post("/api/vendors", async (req, res) => {
       await axios.put(
         `${ZOHO}/${process.env.ZOHO_VENDORS_MODULE_ID}`,
         { data: [{ id: vendorId, ...vendorData }] },
-        { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } }
+        { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } },
       );
       console.log("🔄 Vendor Updated:", vendorId);
     } else {
       const createResp = await axios.post(
         `${ZOHO}/${process.env.ZOHO_VENDORS_MODULE_ID}`,
         { data: [vendorData] },
-        { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } }
+        { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } },
       );
       vendorId = createResp.data.data[0].details.id;
       console.log("🆕 Vendor Created:", vendorId);
@@ -541,12 +545,9 @@ app.post("/api/vendors", async (req, res) => {
     // 7️⃣ Create Purchase Request
     // -----------------------
     const purchaseRequestPayload = {
-      Name:
-        purchaseRequestDataRaw.requisition_number ||
-        `PR-${Date.now()}`,
+      Name: purchaseRequestDataRaw.requisition_number || `PR-${Date.now()}`,
       Vendor: { id: vendorId },
-      Expected_Delivery_Date:
-        purchaseRequestDataRaw.expected_delivery_date,
+      Expected_Delivery_Date: purchaseRequestDataRaw.expected_delivery_date,
       Warehouse: purchaseRequestDataRaw.warehouse || "Default",
       Tag: purchaseRequestDataRaw.tag || "",
       Exchange_Rate: purchaseRequestDataRaw.exchange_rate || 1,
@@ -555,17 +556,16 @@ app.post("/api/vendors", async (req, res) => {
 
     console.log(
       "📦 FINAL Purchase Request Payload:",
-      JSON.stringify(purchaseRequestPayload, null, 2)
+      JSON.stringify(purchaseRequestPayload, null, 2),
     );
 
     const prResp = await axios.post(
       `${ZOHO}/${process.env.ZOHO_PURCHASE_REQUESTS_MODULE_ID}`,
       { data: [purchaseRequestPayload] },
-      { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } }
+      { headers: { Authorization: `Zoho-oauthtoken ${accessToken}` } },
     );
 
-    const purchaseRequestId =
-      prResp.data.data[0].details.id;
+    const purchaseRequestId = prResp.data.data[0].details.id;
 
     // -----------------------
     // 8️⃣ Send Response
@@ -574,8 +574,7 @@ app.post("/api/vendors", async (req, res) => {
       success: true,
       vendorId,
       purchaseRequestId,
-      message:
-        "Vendor synced & Purchase Request created successfully",
+      message: "Vendor synced & Purchase Request created successfully",
       requestData: purchaseRequestPayload,
     });
   } catch (error) {
