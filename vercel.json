@@ -7,195 +7,28 @@
     }
   ],
   "routes": [
-    {
-      "src": "/health",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/claims",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/vendors",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/products/search",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/contacts/search",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/contacts/save",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/contacts/(?<id>.*)",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/vendors/search",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/sales/create",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/finance/contacts/search",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/trail/search",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/trail/create",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/api/trail/check-duplicate",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/ai/generate",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/config/encrypted-key",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/oauth/callback",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/test-cors",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/debug/env",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://elec-zoho-frontend-whjphfjx.onslate.in",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Access-Control-Allow-Credentials": "true"
-      }
-    }
+    { "src": "/health", "dest": "/index.js" },
+
+    { "src": "/api/claims", "dest": "/index.js" },
+    { "src": "/api/vendors", "dest": "/index.js" },
+    { "src": "/api/products/search", "dest": "/index.js" },
+
+    { "src": "/api/contacts/search", "dest": "/index.js" },
+    { "src": "/api/contacts/save", "dest": "/index.js" },
+    { "src": "/api/contacts/(?<id>.*)", "dest": "/index.js" },
+
+    { "src": "/vendors/search", "dest": "/index.js" },
+
+    { "src": "/api/sales/create", "dest": "/index.js" },
+
+    { "src": "/api/finance/contacts/search", "dest": "/index.js" },
+
+    { "src": "/api/trail/search", "dest": "/index.js" },
+    { "src": "/api/trail/create", "dest": "/index.js" },
+    { "src": "/api/trail/check-duplicate", "dest": "/index.js" },
+    { "src": "/ai/generate", "dest": "/index.js" },
+    { "src": "/config/encrypted-key", "dest": "/index.js" },
+
+    { "src": "/oauth/callback", "dest": "/index.js" }
   ]
 }
