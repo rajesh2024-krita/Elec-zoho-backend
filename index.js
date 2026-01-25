@@ -9,14 +9,26 @@ const CryptoJS = require("crypto-js");
 dotenv.config();
 
 const app = express();
-// app.use(cors());
-app.use(cors({
-  origin: [
-    "https://elec-zoho-frontend-whjphfjx.onslate.in",
-  ],
-  methods: "GET,POST,PUT",
-  credentials: true
-}));
+// Add this OPTIONS handler before all routes
+app.options('*', (req, res) => {
+  console.log('OPTIONS preflight request received');
+  res.header('Access-Control-Allow-Origin', 'https://elec-zoho-frontend-whjphfjx.onslate.in');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.status(200).send();
+});
+
+// Add a middleware to set CORS headers for all responses
+app.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.path}`);
+  res.header('Access-Control-Allow-Origin', 'https://elec-zoho-frontend-whjphfjx.onslate.in');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 
 app.use(express.json({ limit: "10mb" }));
 
